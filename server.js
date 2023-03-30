@@ -8,12 +8,17 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import cors from "cors";
 import path from 'path'
+import { fileURLToPath } from "url";
 
 //configure env
 dotenv.config();
 
 //databse config
 connectDB();
+
+//esmodule fix
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 //rest object
 const app = express();
@@ -25,14 +30,15 @@ app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, './client/build')))
 
 //routes
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/category", categoryRoutes);
+app.use("/api/v1/product", productRoutes);
+
+//rest api
 app.use('*', function (req, res) {
   res.sendFile(path.join(__dirname, "./client/build/index.html"))
 })
 
-//rest api
-app.get("/", (req, res) => {
-  res.send("<h1>Welcome to MyKart</h1>");
-});
 
 //PORT
 const PORT = process.env.PORT || 8080;
